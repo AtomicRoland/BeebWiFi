@@ -1,0 +1,11 @@
+/rom/beebwifi-latest.bin
+/rom/beebwifi-output.lst
+/rom/beebwifi-version.txt
+/rom/beebwifi.rom
+/rom/bbcwifi.rom
+/cpld/BeebWiFi/cpld_summary.html
+/cpld/BeebWiFi/FlipFlop.jhd
+/cpld/BeebWiFi/FlipFlop.sch
+/cpld/BeebWiFi/tmperr.err
+/cpld/BeebWiFi/_xmsgs/
+/cpld/BeebWiFi/BeebWiFii_envsettings.html

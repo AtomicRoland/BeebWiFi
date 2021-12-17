@@ -1,0 +1,44 @@
+NET "A(7)" BUFG=DATA_GATE;
+NET "A(6)" BUFG=DATA_GATE;
+
+NET "A(0)"            LOC = "P8";
+NET "A(1)"            LOC = "P7";
+NET "A(2)"            LOC = "P6";
+NET "A(3)"            LOC = "P5";
+NET "A(4)"            LOC = "P3";
+NET "A(5)"            LOC = "P2";
+NET "A(6)"            LOC = "P1";
+NET "A(7)"            LOC = "P44";
+
+NET "nPGFC"           LOC = "P39";
+NET "nPGFD"           LOC = "P40";
+NET "reset_in"        LOC = "P42";
+NET "reset_out"       LOC = "P18";
+NET "cs_uart"         LOC = "P16";
+NET "cs_ram"          LOC = "P32";
+NET "cs_pareg"        LOC = "P29";
+NET "cs_buf"          LOC = "P31";
+NET "bufdir"          LOC = "P30";
+
+NET "clk_in"          LOC = "P43";
+
+NET "LED_RX_A"        LOC = "P19";
+NET "LED_TX_A"        LOC = "P20";
+NET "LED_RX_B"        LOC = "P37";
+NET "LED_TX_B"        LOC = "P38";
+
+NET "rx_esp"          LOC = "P23";
+NET "tx_b"            LOC = "P22";
+NET "rx_b"            LOC = "P21";
+NET "rx_a"            LOC = "P27";
+NET "tx_a"            LOC = "P28";
+
+NET "RnW"             LOC = "P41";
+NET "IOR"             LOC = "P33";
+NET "IOW"             LOC = "P34";
+
+# Unused, but on pcb connected pins
+# NET "mfa"          LOC = "P36";
+# NET "ext_a"        LOC = "P12";
+# NET "ext_b"        LOC = "P13";
+# NET "ext_c"        LOC = "P14";
