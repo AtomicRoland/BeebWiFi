@@ -22,11 +22,22 @@
             osrdch = &FFE0
             oswrch = &FFEE
             osasci = &FFE3
+            osword = &FFF1			\ Added Timo Hartong for NTP
             osbyte = &FFF4
             osnewl = &FFE7
             oscli  = &FFF7
             switch = &FE30
             shadow = &F4
+
+			\  Added Timo hartong for NTP
+			\ OS Byte constants
+			ReadFred 	= &92
+			WriteFred 	= &93
+			ReadJim 	= &94
+			WriteJim 	= &95
+			\ OSWord constants
+			ReadSysClock = 1
+			WriteSysClock = 2
 
             uptvec = &222           \ User Print Vector
             netprt = &D90           \ Network printer name or ip (32 char)

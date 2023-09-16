@@ -22,9 +22,9 @@ include "bbcmicro.asm"
                     equb &00                    \ version 0.0x
 .romtitle           equs "BBC Wifi"
                     equb 0
-.romversion         equs "0.29"                 \ Rom version string
+.romversion         equs "0.30"                 \ Rom version string
 .copyright          equb 0                      \ Copyright message
-                    equs "(C)2022 Roland Leurs"
+                    equs "(C)2023 Roland Leurs"
                     equb 0
 
 \ Command table
@@ -145,6 +145,7 @@ include "bbcmicro.asm"
                     jsr osbyte
                     cpx #0                      \ test for soft reset
                     beq autorun_l1
+                    jsr SetUTCToZero			\ Set default offset (time zone) for date and time command
                     lda #7                      \ ring the bell on power on and hard reset
                     jsr oswrch
                     cpx #1                      \ was it a power on reset
@@ -178,9 +179,13 @@ include "bbcmicro.asm"
                     equs "IFCFG"
                     equb >ifcfg_cmd, <ifcfg_cmd
                     equs "DATE"
-                    equb >date_cmd, <date_cmd
-                    equs "TIME"
-                    equb >time_cmd, <time_cmd
+                    equb >ntptime_cmd, <ntptime_cmd
+					equs "TZ"
+                    equb >utcoff_cmd, <utcoff_cmd
+					equs "TIMEZONE"
+                    equb >utcoff_cmd, <utcoff_cmd
+					equs "TIME"
+                    equb >ntptime_cmd, <ntptime_cmd
                     equs "PRD"
                     equb >pdump_cmd, <pdump_cmd
                     equs "JOIN"
@@ -205,10 +210,10 @@ include "bbcmicro.asm"
                     equb >rewind_cmd, <rewind_cmd
                     equs "QUPCFS"
                     equb >bUPCFS, <bUPCFS
-                    equs "TELNET"
-                    equb >telnet_cmd, <telnet_cmd
-                    equs "RESUME"
-                    equb >resume_cmd, <resume_cmd
+\                    equs "TELNET"
+\                    equb >telnet_cmd, <telnet_cmd
+\                    equs "RESUME"
+\                    equb >resume_cmd, <resume_cmd
                     equb >command_x6, <command_x6
                     
 
@@ -240,6 +245,7 @@ include "bbcmicro.asm"
                     equs " PRINTER   Enable printer driver",&0D
                     equs " SETSERIAL Configure serial port A",&0D
                     equs " TIME      Print current time",&0D
+					equs " TIMEZONE  Sets the UTC offset with LT",&0D
                     equs " VERSION   Print firmware version",&0D
                     equs " WGET      Get a file from a webserver",&0D
                     equs " WICFS     Enable WiFi CFS",&0D
@@ -255,6 +261,8 @@ include "bbcmicro.asm"
 .osword65           lda &EF                     \ load OSWORD number
                     cmp #&65                    \ compare with &65
                     beq osword65_l1             \ jump if it's my call
+					cmp #&0E
+					beq osword14
                     lda #8                      \ it is not mine, so continu with unmodified A
                     rts
 .osword65_l1        tya                         \ save X and Y registers, we don't save the A because
@@ -274,12 +282,20 @@ include "bbcmicro.asm"
                     jsr wifidriver              \ execute the wifi function
                     jmp call_claimed            \ return from OSWORD call
 
+.osword14		 	tya                         \ save X and Y registers
+                    pha
+                    txa
+                    pha
+					ldx &F0                 	\ load the X value
+                    ldy &F1                 	\ load the Y value
+                    jsr ntpdriver               \ execute the wifi function
+                    jmp call_claimed            \ return from OSWORD call
+
 include "routines.asm"
 include "errors.asm"
 include "serial.asm"
 include "driver.asm"
 include "version.asm"
-include "time.asm"
 include "lap.asm"
 include "ifcfg.asm"
 include "wificmd.asm"
@@ -290,12 +306,15 @@ include "wicfs.asm"
 include "wget.asm"
 include "menu.asm"
 include "ping.asm"
-include "telnet.asm"
+\ include "telnet.asm"
 include "printer.asm"
+include "ntp.asm"
 
 equs "This is the end!"
 
-skipto &C000
+skipto &BFFE
+.default_tz     equb    02          ; Default time zone
+
 .romend             
 
 SAVE "bbcwifi.rom", romstart, romend
