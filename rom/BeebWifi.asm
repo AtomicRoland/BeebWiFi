@@ -22,7 +22,7 @@ include "bbcmicro.asm"
                     equb &00                    \ version 0.0x
 .romtitle           equs "BBC Wifi"
                     equb 0
-.romversion         equs "0.30"                 \ Rom version string
+.romversion         equs "0.32"                 \ Rom version string
 .copyright          equb 0                      \ Copyright message
                     equs "(C)2023 Roland Leurs"
                     equb 0
@@ -64,6 +64,10 @@ include "bbcmicro.asm"
                     bmi command_x1              \ jump if negative (i.e. end of command, high byte of start address)
                     cmp (line),y                \ compare with character on command line
                     beq command_x2              \ jump if equal
+                    ora #&20                    \ perhaps it's lower case, convert to upper case
+                    cmp (line),y                \ compare again
+                    beq command_x2              \ jump if equal
+
 \ There was a character read that is not in the current command. Either it is abbreviated or it's
 \ another command. In both cases, increment the X index to the end of the command in the table. X points
 \ to the (possible) start address of the command.
@@ -102,6 +106,7 @@ include "bbcmicro.asm"
                     beq help_l2                 \ yes it is, print title and version
                     ldx #3                      \ load keyword length
 .help_l1            lda (line),y                \ read next character from keyword
+                    and #&DF                    \ convert to upper case
                     cmp commands,x              \ compare with my keyword
                     bne help_l3                 \ if not equal then it's not me
                     iny                         \ increment command pointer
@@ -130,6 +135,8 @@ include "bbcmicro.asm"
                     pha                         \ the exit value of A depends on the command.
                     txa
                     pha
+                    lda #4                      \ load default time-out value
+                    sta time_out_set
                     lda #&D7                    \ Turn off default banner
                     ldx #0
                     stx pagereg                 \ reset page register to 0
@@ -280,6 +287,8 @@ include "bbcmicro.asm"
                     tay                         \ transfer to Y register
                     pla                         \ restore A (= function number)
                     jsr wifidriver              \ execute the wifi function
+                    stx &F0                     \ store X register in &F0
+                    sty &F1
                     jmp call_claimed            \ return from OSWORD call
 
 .osword14		 	tya                         \ save X and Y registers
@@ -314,7 +323,7 @@ equs "This is the end!"
 
 skipto &BFFE
 .default_tz     equb    02          ; Default time zone
-
+                equb    00          ;
 .romend             
 
 SAVE "bbcwifi.rom", romstart, romend

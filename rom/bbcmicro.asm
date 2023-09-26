@@ -8,6 +8,7 @@
             __ATOM__ = 0
 
 			uart = &FC30            \ Base address for the 16C2552 UART B-port
+            time_out_set = &FC37    \ Scratch register B
 
             pagereg = &FCFF
             pageram = &FD00
